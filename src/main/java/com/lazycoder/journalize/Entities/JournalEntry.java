@@ -1,13 +1,15 @@
 package com.lazycoder.journalize.Entities;
 
+import lombok.*;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
-import java.util.Date;
+//import java.util.Date;
 
 @Document(collection = "journalEntries")
+@Data
 public class JournalEntry {
 
     @Id
@@ -19,35 +21,5 @@ public class JournalEntry {
 
     private LocalDateTime Date;
 
-    public LocalDateTime getDate() {
-        return Date;
-    }
-
-    public void setDate(LocalDateTime date) {
-        Date = date;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public ObjectId getId() {
-        return id;
-    }
-
-    public void setId(ObjectId id) {
-        this.id = id;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
+    // All the boilerplate code ( like-Getter, setters, constructors) can be removed using lombok
 }
