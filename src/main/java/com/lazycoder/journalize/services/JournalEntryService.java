@@ -1,6 +1,7 @@
 package com.lazycoder.journalize.services;
 
 import com.lazycoder.journalize.Entities.JournalEntry;
+import com.lazycoder.journalize.Entities.User;
 import com.lazycoder.journalize.Repositories.JournalEntryRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -9,7 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 @Component
 @Slf4j
@@ -18,16 +20,27 @@ public class JournalEntryService {
     @Autowired
     private JournalEntryRepository journalEntryRepository;
 
-    public void saveEntry(@NotNull JournalEntry journalEntry) {
+    @Autowired
+    private UserService userService;
+
+    public void saveEntry(@NotNull JournalEntry journalEntry, String username) {
         try{
+            User user = userService.findByUserName(username);
+
             journalEntry.setDate(LocalDateTime.now());
-            journalEntryRepository.save(journalEntry);
+            JournalEntry savedDoc = journalEntryRepository.save(journalEntry);
+            user.getUserEntries().add(savedDoc);
+            userService.saveEntry(user);
         } catch (Exception e) {
             log.error("Exception : ", e);
         }
     }
 
-    public List<JournalEntry> getAll() {
+    public void saveEntry(@NotNull JournalEntry journalEntry) {
+        journalEntryRepository.save(journalEntry);
+    }
+    public List<JournalEntry> getAllEntriesByUser(String username) {
+
         return journalEntryRepository.findAll();
     }
 
@@ -35,7 +48,10 @@ public class JournalEntryService {
         return journalEntryRepository.findById(id);
     }
 
-    public void deleteById(ObjectId id) {
+    public void deleteById(ObjectId id, String username) {
+        User user = userService.findByUserName(username);
+        user.getUserEntries().removeIf(x -> x.getId().equals(id));
+        userService.saveEntry(user);
         journalEntryRepository.deleteById(id);
     }
 }
