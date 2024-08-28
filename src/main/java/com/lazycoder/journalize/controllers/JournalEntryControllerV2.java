@@ -34,7 +34,7 @@ public class JournalEntryControllerV2 {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PostMapping("{username}")
+    @PostMapping("/{username}")
     public ResponseEntity<?> createNewEntry(@RequestBody JournalEntry newEntry,@PathVariable String username) {
         try{
             journalEntryService.saveEntry(newEntry, username);
@@ -44,7 +44,7 @@ public class JournalEntryControllerV2 {
         }
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/id/{id}")
     public ResponseEntity<?> getJournalEntryById(@PathVariable ObjectId id){
         Optional<JournalEntry> entry= journalEntryService.getEntryById(id);
         if(entry.isPresent()) {
