@@ -8,6 +8,7 @@ import org.bson.types.ObjectId;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,6 +24,7 @@ public class JournalEntryService {
     @Autowired
     private UserService userService;
 
+    @Transactional
     public void saveEntry(@NotNull JournalEntry journalEntry, String username) {
         try{
             User user = userService.findByUserName(username);
@@ -30,9 +32,11 @@ public class JournalEntryService {
             journalEntry.setDate(LocalDateTime.now());
             JournalEntry savedDoc = journalEntryRepository.save(journalEntry);
             user.getUserEntries().add(savedDoc);
+//            user.setUsername(null); // for testing Transactional annotation
             userService.saveEntry(user);
         } catch (Exception e) {
             log.error("Exception : ", e);
+            throw new RuntimeException("An error occured while saving the entry: ", e);
         }
     }
 
