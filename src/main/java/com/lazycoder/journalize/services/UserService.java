@@ -42,6 +42,16 @@ public class UserService {
         }
     }
 
+    public void saveNewAdmin(@NotNull User newUser) {
+        try{
+            newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
+            newUser.setRoles(Arrays.asList("USER","ADMIN"));
+            userRepository.save(newUser);
+        } catch (Exception e) {
+            log.error("Exception : ", e);
+        }
+    }
+
 
     public List<User> getAll() {
         return userRepository.findAll();
