@@ -24,9 +24,12 @@ public class JournalEntryService {
     @Autowired
     private UserService userService;
 
+//    private static final Logger logger = LoggerFactory.getLogger(JournalEntryService.class);
+
     @Transactional
     public void saveEntry(@NotNull JournalEntry journalEntry, String username) {
         try{
+            log.info("SaveEntry function is called");
             User user = userService.findByUserName(username);
 
             journalEntry.setDate(LocalDateTime.now());
@@ -35,7 +38,8 @@ public class JournalEntryService {
 //            user.setUsername(null); // for testing Transactional annotation
             userService.saveEntry(user);
         } catch (Exception e) {
-            log.error("Exception : ", e);
+//            logger.error("Error occurred for {} : ", username, e);  // when create logger instance in class using LoggerFactory
+            log.error("Error occurred for {} : ", username, e); // when using @Slf4j annotation
             throw new RuntimeException("An error occured while saving the entry: ", e);
         }
     }
